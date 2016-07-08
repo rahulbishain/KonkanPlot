@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import matplotlib.dates
 import csv, sys, re, random, os, datetime, time
 
-datfile="Konkan1.csv"
-datfile1="Konkan2.csv"
+datfile="Konkan timetable.csv"
+#datfile1="Konkan2.csv"
 Mcsv = csv.reader(open(datfile, 'rb'), delimiter=',', quotechar='"')
-Mcsv1 = csv.reader(open(datfile1, 'rb'), delimiter=',', quotechar='"')
+#Mcsv1 = csv.reader(open(datfile1, 'rb'), delimiter=',', quotechar='"')
 
 # Mapping from column name to column index
 I = {}
@@ -16,7 +16,43 @@ I1 = {}
 # Matrix of all the rows
 M = []
 M1 = []
+dis = []
+dis1 = []
+stn = []
+stn1 = []
+tim = []
+tim1 = [0]
+tim2 = [0]
 
+trainCount = 0
+for line in Mcsv:
+    if 'Train No' in line[0]:
+        dis.append(dis1)
+        stn.append(stn1)
+        tim.append(tim1)
+        tim1[0] = tim2[0] 
+        dis1 = []
+        stn1 = []
+        tim1 = []
+        tim2 = []
+        trainCount+=1
+    else:
+        if line[2]:
+            dis1.append(line[7])
+            stn1.append(line[2])
+            tim1.append(line[4])
+            tim2.append(line[5])
+            
+
+#for item in range(len(dis)):
+#print tim[1]
+#print dis1
+time_col = map(lambda r: datetime.datetime.strptime(r,"%H:%M") , tim[1])
+plt.plot(time_col, dis[1], 'b')
+time_col = map(lambda r: datetime.datetime.strptime(r,"%H:%M") , tim[2])
+plt.plot(time_col, dis[2], 'r')
+plt.show()
+'''
 rowNum = 0
 for row in Mcsv:
     rowNum += 1
@@ -73,3 +109,4 @@ plt.savefig("time_table.pdf")
 plt.show()
 #plt.plot_date(arrival_time_col,dat_col)
 #plt.show()
+'''
