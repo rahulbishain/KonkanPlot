@@ -23,33 +23,63 @@ stn1 = []
 tim = []
 tim1 = [0]
 tim2 = [0]
+runDays = []
+runDays1 = []
+dayOfJourney = []
+days = {'MON':'01/01/01','TUE':'02/01/01','WED':'03/01/01','THU':'04/01/01','FRI':'05/01/01','SAT':'06/01/01','SUN':'07/01/01'}
 
 trainCount = 0
+linNum = 0
 for line in Mcsv:
+    linNum+=1
+    print linNum
     if 'Train No' in line[0]:
-        dis.append(dis1)
-        stn.append(stn1)
-        tim.append(tim1)
+#        dis.append(dis1)
+#        stn.append(stn1)
+#        tim.append(tim1)
+#        runDays.append(runDays1)
         tim1[0] = tim2[0] 
+        for temp in runDays1:
+            dis.append(dis1)
+            stn.append(stn1)
+            tempTime = map(lambda r:days[temp]+' '+r,tim1)
+            for (x,y) in zip(tempTime,dayOfJourney):
+                if y <> 1:
+                    temp = int(x[1]) + int(y) - 1
+                    temp = (temp%7)
+                    temp1 = '0' + str(temp)
+            tim.append(tempTime)
+            tempTime = []
+            runDays.append(runDays1)
         dis1 = []
         stn1 = []
         tim1 = []
         tim2 = []
+        runDays1 = []
+        dayOfJourney = []
         trainCount+=1
     else:
+        if 'runs on' in line[0].lower():
+            runDays1 = line[0].split(':')[1].split(',')
+            runDays1 = map(lambda r: r.strip().replace('\xef','').replace('\xc2','').replace('\xa0',''),runDays1)
+            if 'DAILY' in runDays1:
+                runDays1 = ['MON','TUE','WED','THU','FRI','SAT','SUN']
         if line[2]:
             dis1.append(line[7])
             stn1.append(line[2])
             tim1.append(line[4])
             tim2.append(line[5])
+            dayOfJourney.append(line[6])
             
 
 #for item in range(len(dis)):
-#print tim[1]
+print tim[0]
+print tim[1]
+print tim[11]
 #print dis1
-time_col = map(lambda r: datetime.datetime.strptime(r,"%H:%M") , tim[1])
+time_col = map(lambda r: datetime.datetime.strptime(r,"%d/%m/%y %H:%M") , tim[1])
 plt.plot(time_col, dis[1], 'b')
-time_col = map(lambda r: datetime.datetime.strptime(r,"%H:%M") , tim[2])
+time_col = map(lambda r: datetime.datetime.strptime(r,"%d/%m/%y %H:%M") , tim[2])
 plt.plot(time_col, dis[2], 'r')
 plt.show()
 '''
