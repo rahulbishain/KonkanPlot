@@ -32,22 +32,24 @@ trainCount = 0
 linNum = 0
 for line in Mcsv:
     linNum+=1
-    print linNum
     if 'Train No' in line[0]:
-#        dis.append(dis1)
-#        stn.append(stn1)
-#        tim.append(tim1)
-#        runDays.append(runDays1)
         tim1[0] = tim2[0] 
         for temp in runDays1:
             dis.append(dis1)
             stn.append(stn1)
             tempTime = map(lambda r:days[temp]+' '+r,tim1)
+            tempCount = 0
             for (x,y) in zip(tempTime,dayOfJourney):
                 if y <> 1:
-                    temp = int(x[1]) + int(y) - 1
-                    temp = (temp%7)
-                    temp1 = '0' + str(temp)
+                    temp1 = int(x[1]) + int(y) - 1
+                    temp1 = (temp1%7)
+                    if temp1 == 0:
+                        temp1 = 7
+                    temp2 = list(x)
+                    temp2[1] = str(temp1)
+                    x = ''.join(temp2)
+                    tempTime[tempCount] = x 
+                tempCount += 1
             tim.append(tempTime)
             tempTime = []
             runDays.append(runDays1)
@@ -72,16 +74,12 @@ for line in Mcsv:
             dayOfJourney.append(line[6])
             
 
-#for item in range(len(dis)):
-print tim[0]
-print tim[1]
-print tim[11]
-#print dis1
-time_col = map(lambda r: datetime.datetime.strptime(r,"%d/%m/%y %H:%M") , tim[1])
-plt.plot(time_col, dis[1], 'b')
-time_col = map(lambda r: datetime.datetime.strptime(r,"%d/%m/%y %H:%M") , tim[2])
-plt.plot(time_col, dis[2], 'r')
+for i in range(trainCount):
+    time_col = map(lambda r: datetime.datetime.strptime(r,"%d/%m/%y %H:%M") , tim[i])
+    plt.plot(time_col, dis[i], 'b')
+
 plt.show()
+print trainCount
 '''
 rowNum = 0
 for row in Mcsv:
