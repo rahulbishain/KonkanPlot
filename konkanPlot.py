@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates
 import csv, sys, re, random, os, datetime, time
+#import getch # for user prompt. note: use msvcrt and not getch for windows
 
 datfile="Konkan timetable.csv"
 #datfile1="Konkan2.csv"
@@ -16,6 +17,8 @@ I1 = {}
 # Matrix of all the rows
 M = []
 M1 = []
+trainNo=[]
+#trainNo.append('')
 dis = []
 dis1 = []
 stn = []
@@ -32,9 +35,11 @@ trainCount = 0
 linNum = 0
 for line in Mcsv:
     linNum+=1
+#    print linNum
     if 'Train No' in line[0]:
         tim1[0] = tim2[0] 
         for temp in runDays1:
+            trainNo.append(line[0].strip().replace('\xef','').replace('\xc2','').replace('\xa0',''))
             dis.append(dis1)
             stn.append(stn1)
             tempTime = map(lambda r:days[temp]+' '+r,tim1)
@@ -75,11 +80,71 @@ for line in Mcsv:
             
 
 for i in range(trainCount):
-    time_col = map(lambda r: datetime.datetime.strptime(r,"%d/%m/%y %H:%M") , tim[i])
-    plt.plot(time_col, dis[i], 'b')
-
-plt.show()
+    print 'train No = ',trainNo[i]
+    for j in range(len(tim[i])):
+        print tim[i][j],dis[i][j]
+    s=raw_input()
+#assert False
+#    time_col = map(lambda r: datetime.datetime.strptime(r,"%d/%m/%y %H:%M") , tim[i])
+#    plt.plot(time_col, dis[i], 'b',marker="|", markersize=9, mew=2, linewidth=.5)
+#
+#plt.show()
 print trainCount
+trainUpDown=[]
+for x in range(trainCount):
+    print "train - ",x+1
+    distanceNotZero = 0
+    upDown = 'NA'
+    prevDistance = 0
+    prevStn=''
+    currDistance = 0
+    for a,b,c in zip(tim[x],dis[x],stn[x]):
+        print c,a,b
+        currDistance = int(b)
+        if currDistance<>0 and distanceNotZero==0:
+            distanceNotZero = 1
+        if distanceNotZero==1 and upDown=='NA':
+            if prevDistance <> 0:
+                if prevDistance < currDistance:
+                    upDown = 'Down'
+                elif prevDistance > currDistance and currDistance<>0:
+                    upDown = 'Up'
+        prevDistance = currDistance
+        prevStn = c
+    print upDown
+    trainUpDown.append(upDown)
+    if upDown =='NA':
+        assert False
+    s = raw_input()
+    continue
+for x in range(trainCount):
+    print x+1,trainNo[x],trainUpDown[x]
+    upDown=trainUpDown[x]
+    for a,b,c in zip(tim[x],dis[x],stn[x]):
+#        print c,a,b
+        if upDown=='Down': 
+            if currDistance==0 and prevDistance>0:
+                print "WATCHDOWN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                if prevStn <> 'KNKD' and prevStn<>'MAQ':
+                    print trainNo[x]
+                    assert False
+            elif currDistance>0 and prevDistance==0:
+                print "WATCHDOWN--------------------------------------"
+                if prevStn <> 'ROH' and prevStn<>'PNVL':
+                    print trainNo[x]
+                    assert False
+        elif upDown=='Up': 
+            if currDistance>0 and prevDistance==0:
+                print "UPWATCH!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                if c<>'KNKD' and c<>'MAQ':
+                    print trainNo[x]
+                    assert False
+            elif currDistance==0 and prevDistance>0:
+                print "UPWATCH--------------------------------------"
+                if c<>'ROH' and c<>'PNVL':
+                    print trainNo[x]
+                    assert False
+    s=raw_input()
 '''
 rowNum = 0
 for row in Mcsv:
